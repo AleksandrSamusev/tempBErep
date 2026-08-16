@@ -1,7 +1,6 @@
 package dev.practice.planner.controller;
 
 import dev.practice.planner.dtos.*;
-import dev.practice.planner.service.AvailabilityService;
 import dev.practice.planner.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final AvailabilityService availabilityService;
 
     @PostMapping
     ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto request) {
@@ -50,10 +48,10 @@ public class UserController {
         return new ResponseEntity<>(userService.updateDevice(userId, deviceId, dto), HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}/availability")
-    ResponseEntity<AvailabilityResponseDto> reportAvailability(@PathVariable Long userId,
-                                                               @Valid @RequestBody AvailabilityRequestDto dto) {
-        return new ResponseEntity<>(availabilityService.reportAvailability(userId, dto), HttpStatus.CREATED);
+    @PutMapping("/{userId}/availability")
+    ResponseEntity<List<AvailabilityDto>> updateAvailability(@PathVariable Long userId,
+                                                               @Valid @RequestBody List<AvailabilityDto> availabilityPayload) {
+        return new ResponseEntity<List<AvailabilityDto>>(userService.updateUserAvailability(userId, availabilityPayload), HttpStatus.OK);
     }
 
 

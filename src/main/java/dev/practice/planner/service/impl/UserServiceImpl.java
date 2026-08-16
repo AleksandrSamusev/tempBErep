@@ -13,10 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,7 +31,7 @@ public class UserServiceImpl implements UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        if(request.getDevices() != null) {
+        if (request.getDevices() != null) {
             Set<Long> brandIds = request.getDevices().stream().map(DeviceRequestDto::getBrandId).collect(Collectors.toSet());
             List<Brand> brands = brandRepository.findAllById(brandIds);
             Map<Long, Brand> brandMap = brands.stream().collect(Collectors.toMap(Brand::getId, Function.identity()));
@@ -62,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
         List<DeviceResponseDto> deviceDtos = new ArrayList<>();
 
-        for(Device device: savedUser.getDevices()) {
+        for (Device device : savedUser.getDevices()) {
             DeviceResponseDto resp = new DeviceResponseDto();
             resp.setId(device.getId());
             resp.setBrandId(device.getBrand().getId());
@@ -95,8 +91,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public DeviceResponseDto addDevice(Long userId, DeviceRequestDto dto) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found with given id: " + userId));
-        Brand brand = brandRepository.findById(dto.getBrandId()).orElseThrow(()-> new EntityNotFoundException("Brand not found with given id: " + dto.getBrandId()));
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with given id: " + userId));
+        Brand brand = brandRepository.findById(dto.getBrandId()).orElseThrow(() -> new EntityNotFoundException("Brand not found with given id: " + dto.getBrandId()));
         Device device = new Device();
         device.setBrand(brand);
         device.setModel(dto.getModel());
@@ -123,30 +119,30 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public DeviceResponseDto updateDevice(Long userId, Long deviceId, DeviceRequestDto dto) {
-       User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found with given id: " + userId));
-       Device device = user.getDevices().stream().filter(d -> Objects.equals(d.getId(), deviceId)).findFirst().orElseThrow(
-               ()-> new EntityNotFoundException("Device not found with given id: " + deviceId));
-       Brand brand = brandRepository.findById(dto.getBrandId()).orElseThrow(
-               ()->new EntityNotFoundException("Brand not found with given id: " + dto.getBrandId()));
-       device.setBrand(brand);
-       device.setModel(dto.getModel());
-       device.setType(dto.getType());
-       device.setOs(dto.getOs());
-       device.setOsVersion(dto.getOsVersion());
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with given id: " + userId));
+        Device device = user.getDevices().stream().filter(d -> Objects.equals(d.getId(), deviceId)).findFirst().orElseThrow(
+                () -> new EntityNotFoundException("Device not found with given id: " + deviceId));
+        Brand brand = brandRepository.findById(dto.getBrandId()).orElseThrow(
+                () -> new EntityNotFoundException("Brand not found with given id: " + dto.getBrandId()));
+        device.setBrand(brand);
+        device.setModel(dto.getModel());
+        device.setType(dto.getType());
+        device.setOs(dto.getOs());
+        device.setOsVersion(dto.getOsVersion());
 
-       User savedUser = userRepository.save(user);
-       Device savedDevice = savedUser.getDevices().stream().filter(d -> Objects.equals(d.getId(), deviceId)).findFirst().orElseThrow();
-       return new DeviceResponseDto(
-               savedDevice.getId(),
-               brand.getId(),
-               brand.getName(),
-               brand.getWebsite(),
-               brand.getLogoUrl(),
-               savedDevice.getModel(),
-               savedDevice.getType(),
-               savedDevice.getOs(),
-               savedDevice.getOsVersion()
-       );
+        User savedUser = userRepository.save(user);
+        Device savedDevice = savedUser.getDevices().stream().filter(d -> Objects.equals(d.getId(), deviceId)).findFirst().orElseThrow();
+        return new DeviceResponseDto(
+                savedDevice.getId(),
+                brand.getId(),
+                brand.getName(),
+                brand.getWebsite(),
+                brand.getLogoUrl(),
+                savedDevice.getModel(),
+                savedDevice.getType(),
+                savedDevice.getOs(),
+                savedDevice.getOsVersion()
+        );
     }
 
     @Override
@@ -160,6 +156,32 @@ public class UserServiceImpl implements UserService {
         user.setEmail(dto.getEmail());
         User savedUser = userRepository.save(user);
         return mapToUserResponseDto(savedUser);
+    }
+
+    @Override
+    public List<AvailabilityDto> updateUserAvailability(Long userId, List<AvailabilityDto> requestDtos) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found with given id: " + userId));
+        user.getAvailabilities().clear();
+        userRepository.saveAndFlush(user);
+
+        List<Availability> updatedAvailabilities = requestDtos.stream()
+                .map(dto -> {
+                    Availability availability = new Availability();
+                    availability.setUser(user);
+                    availability.setDate(dto.getDate());
+                    availability.setStatus(dto.getStatus().toLowerCase());
+                    return availability;
+                }).collect(Collectors.toList());
+
+        user.getAvailabilities().addAll(updatedAvailabilities);
+        User savedUser = userRepository.save(user);
+        return savedUser.getAvailabilities().stream()
+                .map(avail -> {
+                    AvailabilityDto dto = new AvailabilityDto();
+                    dto.setDate(avail.getDate());
+                    dto.setStatus(avail.getStatus());
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
     private UserResponseDto mapToUserResponseDto(User user) {
@@ -177,42 +199,16 @@ public class UserServiceImpl implements UserService {
                         .map(this::mapToDeviceResponseDto)
                         .toList();
 
-        List<AvailabilityResponseDto> availabilityDtos =
+        List<AvailabilityDto> availabilityDtos =
                 user.getAvailabilities()
                         .stream()
-                        .sorted(Comparator.comparing(Availability::getWeekStartDate))
-                        .map(this::toAvailabilityResponse)
+                        .sorted(Comparator.comparing(Availability::getDate))
+                        .map(a-> new AvailabilityDto(a.getDate(), a.getStatus()))
                         .toList();
 
-        LocalDate currentMonday =
-                LocalDate.now()
-                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-
-        LocalDate nextMonday =
-                currentMonday.plusWeeks(1);
-
-        AvailabilityResponseDto currentWeekAvailability =
-                user.getAvailabilities()
-                        .stream()
-                        .filter(a -> a.getWeekStartDate().equals(currentMonday))
-                        .findFirst()
-                        .map(this::toAvailabilityResponse)
-                        .orElse(null);
-
-        AvailabilityResponseDto nextWeekAvailability =
-                user.getAvailabilities()
-                        .stream()
-                        .filter(a -> a.getWeekStartDate().equals(nextMonday))
-                        .findFirst()
-                        .map(this::toAvailabilityResponse)
-                        .orElse(null);
 
         userResponseDto.setDevices(deviceDtos);
         userResponseDto.setAvailabilities(availabilityDtos);
-
-        userResponseDto.setCurrentWeekAvailability(currentWeekAvailability);
-        userResponseDto.setNextWeekAvailability(nextWeekAvailability);
-
         return userResponseDto;
     }
 
@@ -228,14 +224,5 @@ public class UserServiceImpl implements UserService {
         deviceResponseDto.setOs(device.getOs());
         deviceResponseDto.setOsVersion(device.getOsVersion());
         return deviceResponseDto;
-    }
-
-    private AvailabilityResponseDto toAvailabilityResponse(Availability availability) {
-        return new AvailabilityResponseDto(
-                availability.getId(),
-                availability.getWeekStartDate(),
-                availability.getMonThuHours(),
-                availability.getFriSunHours()
-        );
     }
 }

@@ -49,5 +49,5 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<Availability> availabilities;
+    private List<Availability> availabilities = new ArrayList<>();
 }

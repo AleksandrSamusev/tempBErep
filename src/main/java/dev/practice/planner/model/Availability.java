@@ -1,7 +1,7 @@
 package dev.practice.planner.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,10 +15,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Table(
-        name = "availabilities",
+        name = "user_availabilities",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"user_id", "week_start_date"}
+                        columnNames = {"user_id", "availability_date"}
                 )
         }
 )
@@ -28,19 +28,15 @@ public class Availability {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "week_start_date", nullable = false)
-    @NotNull(message = "Week start date cannot be Null")
-    private LocalDate weekStartDate;
-
-    @Column(name = "mon_thu_hours")
-    @Min(value = 0, message = "Hours cannot be negative")
-    private Integer monThuHours;
-
-    @Column(name = "fri_sun_hours")
-    @Min(value = 0, message = "Hours cannot be negative")
-    private Integer friSunHours;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(name = "availability_date", nullable = false)
+    @NotNull(message = "Date cannot be Null")
+    private LocalDate date;
+
+    @Column(name = "status", nullable = false)
+    @NotBlank(message = "Status cannot be blank")
+    private String status;
 }

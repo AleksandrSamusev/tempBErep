@@ -1,5 +1,5 @@
 package dev.practice.planner.dtos;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,12 +12,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-
-public class AvailabilityRequestDto {
+public class AvailabilityDto {
     @NotNull(message = "Week start date cannot be Null")
-    private LocalDate weekStartDate;
-    @Min(value = 0, message = "Hours cannot be negative")
-    private Integer monThuHours;
-    @Min(value = 0, message = "Hours cannot be negative")
-    private Integer friSunHours;
+    private LocalDate date;
+    @NotBlank(message = "Status cannot be blank!")
+    private String status;
 }

@@ -17,8 +17,5 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private List<DeviceResponseDto> devices;
-    private List<AvailabilityResponseDto> availabilities;
-
-    private AvailabilityResponseDto currentWeekAvailability;
-    private AvailabilityResponseDto nextWeekAvailability;
+    private List<AvailabilityDto> availabilities;
 }
