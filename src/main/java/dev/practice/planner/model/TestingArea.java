@@ -32,7 +32,7 @@ public class TestingArea {
     @URL
     @NotBlank(message = "URL cannot be blank")
     @Column(name = "url")
-    private String URL;
+    private String url;
 
     @NotNull(message = "complexity is mandatory")
     @Enumerated(EnumType.STRING)

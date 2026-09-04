@@ -44,6 +44,7 @@ public class Run {
     @CollectionTable(name = "run_platforms", joinColumns = @JoinColumn(name = "run_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "platform_name")
+    @Size(min = 1, message = "At least one platform should be defined")
     private List<Platform> platforms = new ArrayList<>();
 
     @OneToMany(mappedBy = "run", cascade = CascadeType.ALL, orphanRemoval = true)
