@@ -1,11 +1,18 @@
 package dev.practice.planner.mapper;
 
 import dev.practice.planner.dtos.RunRequestDto;
+import dev.practice.planner.dtos.RunResponseDto;
 import dev.practice.planner.model.Run;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
+@AllArgsConstructor
 public class RunMapper {
+
+    private final TestingAreaMapper testingAreaMapper;
 
     public Run toRun(RunRequestDto dto) {
         Run run = new Run();
@@ -19,5 +26,23 @@ public class RunMapper {
             run.getPlatforms().addAll(dto.getPlatforms());
         }
         return run;
+    }
+
+    public RunResponseDto toRunResponseDto(Run run) {
+        if(run == null) {
+            return null;
+        }
+        RunResponseDto dto = new RunResponseDto();
+        dto.setId(run.getId());
+        dto.setRunStart(run.getRunStart());
+        dto.setRunEnd(run.getRunEnd());
+        dto.setTitle(run.getTitle());
+        dto.setDescription(run.getDescription());
+        if (run.getPlatforms() != null) {
+            dto.getPlatforms().clear();
+            dto.getPlatforms().addAll(run.getPlatforms());
+        }
+        dto.setTestingAreas(testingAreaMapper.toTestingAreaResponseDtos(run.getTestingAreas()));
+        return dto;
     }
 }

@@ -22,5 +22,5 @@ public class RunResponseDto {
     private String title;
     private String description;
     private List<Platform> platforms = new ArrayList<>();
-    private List<TestingArea> testingAreas = new ArrayList<>();
+    private List<TestingAreaResponseDto> testingAreas = new ArrayList<>();
 }
