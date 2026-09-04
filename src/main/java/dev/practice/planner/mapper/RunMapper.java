@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -44,5 +45,12 @@ public class RunMapper {
         }
         dto.setTestingAreas(testingAreaMapper.toTestingAreaResponseDtos(run.getTestingAreas()));
         return dto;
+    }
+
+    public List<RunResponseDto> toRunResponseDtos(List<Run> runs) {
+        if(runs == null || runs.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return runs.stream().map(this::toRunResponseDto).toList();
     }
 }

@@ -28,6 +28,4 @@ public class TestingAreaRequestDto {
     private Complexity complexity;
     @Size(max = 2000, message = "Notes size should not exceed 2000 characters")
     private String notes;
-    @NotNull(message = "Run ID is mandatory")
-    private Long runId;
 }

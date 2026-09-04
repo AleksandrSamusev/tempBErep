@@ -12,12 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
 public class AreaPlatformAssignmentMapper {
-
-    private final UserMapper userMapper;
-    private final TestingAreaMapper testingAreaMapper;
-
     public AreaPlatformAssignment toAreaPlatformAssignment(AreaPlatformAssignmentRequestDto dto,
                                                            User user,
                                                            TestingArea testingArea) {
