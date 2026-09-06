@@ -40,4 +40,9 @@ public class RunController {
     public ResponseEntity<List<RunResponseDto>> getAllRuns() {
         return new ResponseEntity<>(runService.getAllRuns(), HttpStatus.OK);
     }
+
+    @GetMapping("/runs/{runId}")
+    public ResponseEntity<RunResponseDto> getRunById(@PathVariable Long runId) {
+        return new ResponseEntity<>(runService.getRunById(runId), HttpStatus.OK);
+    }
 }

@@ -9,4 +9,5 @@ public interface RunService {
     TestingAreaResponseDto createTestingArea(TestingAreaRequestDto dto, Long runId);
     List<RunResponseDto> getAllRuns();
     AreaPlatformAssignmentResponseDto createAssignment(AreaPlatformAssignmentRequestDto dto);
+    RunResponseDto getRunById(Long runId);
 }

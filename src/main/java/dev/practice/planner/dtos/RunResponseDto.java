@@ -1,6 +1,7 @@
 package dev.practice.planner.dtos;
 
 import dev.practice.planner.model.Platform;
+import dev.practice.planner.model.RunStatus;
 import dev.practice.planner.model.TestingArea;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class RunResponseDto {
     private LocalDateTime runEnd;
     private String title;
     private String description;
+    private RunStatus runStatus;
     private List<Platform> platforms = new ArrayList<>();
     private List<TestingAreaResponseDto> testingAreas = new ArrayList<>();
 }

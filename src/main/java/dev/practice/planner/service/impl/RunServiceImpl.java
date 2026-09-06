@@ -48,10 +48,6 @@ public class RunServiceImpl implements RunService {
                 () -> new EntityNotFoundException("Run not found with given id: " + runId));
         TestingArea testingArea = testingAreaMapper.toTestingArea(dto, run);
         TestingArea savedTestingArea = testingAreaRepository.save(testingArea);
-        // if(!run.getTestingAreas().contains(savedTestingArea)) {
-        //    run.getTestingAreas().add(savedTestingArea);
-        //}
-        //Run savedRun = runRepository.save(run);
         return testingAreaMapper.toTestingAreaResponseDto(savedTestingArea);
     }
 
@@ -77,5 +73,12 @@ public class RunServiceImpl implements RunService {
                 assignment
         );
         return areaPlatformAssignmentMapper.toAreaPlatformAssignmentResponseDto(savedAssignment);
+    }
+
+    @Override
+    public RunResponseDto getRunById(Long runId) {
+        Run run = runRepository.findById(runId).orElseThrow(()-> new EntityNotFoundException(
+                "Run not found with given id: " + runId));
+        return runMapper.toRunResponseDto(run);
     }
 }

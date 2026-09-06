@@ -1,6 +1,7 @@
 package dev.practice.planner.dtos;
 
 import dev.practice.planner.model.Platform;
+import dev.practice.planner.model.RunStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,6 +25,8 @@ public class RunRequestDto {
     private LocalDateTime runEnd;
     @NotBlank(message = "title cannot be blank")
     private String title;
+    @NotNull(message = "Run status is mandatory")
+    private RunStatus runStatus;
     private String description;
     @Size(min = 1, message = "At least one platform should be defined")
     private List<Platform> platforms = new ArrayList<>();

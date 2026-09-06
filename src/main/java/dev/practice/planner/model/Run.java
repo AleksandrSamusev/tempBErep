@@ -46,6 +46,10 @@ public class Run {
     @Column(name = "platform_name")
     private List<Platform> platforms = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Run status is mandatory")
+    private RunStatus runStatus;
+
     @OneToMany(mappedBy = "run", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestingArea> testingAreas = new ArrayList<>();
 }

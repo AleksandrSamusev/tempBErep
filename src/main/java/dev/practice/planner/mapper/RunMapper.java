@@ -21,6 +21,7 @@ public class RunMapper {
         run.setRunEnd(dto.getRunEnd());
         run.setTitle(dto.getTitle());
         run.setDescription(dto.getDescription());
+        run.setRunStatus(dto.getRunStatus());
 
         if (dto.getPlatforms() != null) {
             run.getPlatforms().clear();
@@ -39,6 +40,7 @@ public class RunMapper {
         dto.setRunEnd(run.getRunEnd());
         dto.setTitle(run.getTitle());
         dto.setDescription(run.getDescription());
+        dto.setRunStatus(run.getRunStatus());
         if (run.getPlatforms() != null) {
             dto.getPlatforms().clear();
             dto.getPlatforms().addAll(run.getPlatforms());
